@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# must be executed as root
+agi='apt-get install -y'
+
+function refresh {
+  apt-get -y update;
+  apt-get -y full-upgrade;
+}
+
+
+# languages and language support
+
+function lang {
+  ${agi} nodejs;
+  ${agi} python3-pip;
+
+  mkdir -p /tmp/anaconda;
+  curl -o /tmp/anaconda/anaconda-install https://repo.continuum.io/archive/Anaconda3-4.2.0-Linux-x86_64.sh;
+  bash /tmp/anaconda/anaconda-install -b -p ~/anaconda;
+
+}
+
+#dev tools
+function dev {
+  ${agi} git;
+  add-apt-repository ppa:webupd8team/atom
+  apt update; apt install -y atom;
+}
+
+# utilities
+function utilities {
+  ${agi} htop;
+  ${agi} net-tools;
+  ${agi} zsh;
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)";
+}
+
+function core_apps {
+   wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - ;
+   sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list';
+   ${agi} google-chrome-stable;
+
+}
+
+function atom_packages {
+   apm install atom-beautify;
+   apm install atom-ternjs;
+   apm install busy-signal;
+   apm install eslint-fixer;
+   apm install intentions;
+   apm install language-babel;
+   apm install language-elixir;
+   apm install linter;
+   apm install linter-eslint;
+   apm install linter-ui-default;j
+   apm install pretty-json;
+}
+
+function all {
+  refresh;
+  dev;
+  utilities;
+  lang;
+  core_apps;
+  atom_packages;
+  refresh;
+}
+
+eval $1
